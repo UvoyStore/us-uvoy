@@ -3,6 +3,8 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { useIsMobile } from "@/components/ui/use-mobile"
 
 interface CartItem {
   id: string
@@ -16,21 +18,20 @@ interface CartItem {
 interface CartSidebarProps {
   items: CartItem[]
   onUpdateQuantity: (itemId: string, change: number) => void
+  isOpen?: boolean
+  onClose?: () => void
 }
 
-export function CartSidebar({ items, onUpdateQuantity }: CartSidebarProps) {
+export function CartSidebar({ items, onUpdateQuantity, isOpen = true, onClose }: CartSidebarProps) {
+  const isMobile = useIsMobile()
   const calculateTotal = (cartItems: CartItem[]) => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
   }
 
   const cartTotal = calculateTotal(items)
 
-  return (
-    <aside className="hidden md:flex w-96 flex-col border-l px-6 md:px-8 py-6 md:py-8">
-      <div className="mb-6 md:mb-8 flex items-center justify-between">
-        <h3 className="text-lg md:text-2xl font-semibold">My Cart</h3>
-      </div>
-
+  const CartContent = () => (
+    <>
       <div className="flex-grow space-y-6 md:space-y-8 overflow-auto">
         {items.map((item) => (
           <div key={item.id} className="flex gap-4 md:gap-6 rounded-2xl md:rounded-3xl bg-white p-3 md:p-4 shadow-sm">
@@ -113,7 +114,7 @@ export function CartSidebar({ items, onUpdateQuantity }: CartSidebarProps) {
         ))}
       </div>
 
-      <div className="mt-6 md:mt-8 space-y-3 md:space-y-4">
+      <div className="mt-auto pt-6 md:pt-8 space-y-3 md:space-y-4">
         <div className="flex items-center justify-between text-xs md:text-base">
           <p className="text-gray-600">Sub Total</p>
           <p className="font-semibold">$ {cartTotal.toFixed(2)}</p>
@@ -131,6 +132,30 @@ export function CartSidebar({ items, onUpdateQuantity }: CartSidebarProps) {
           Checkout
         </Button>
       </div>
+    </>
+  )
+
+  if (isMobile) {
+    return (
+      <Drawer open={isOpen} onOpenChange={(open) => !open && onClose?.()}>
+        <DrawerContent className="max-h-[85vh]">
+          <DrawerHeader>
+            <DrawerTitle>My Cart</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 pb-4 flex flex-col h-full overflow-hidden">
+            <CartContent />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  return (
+    <aside className="hidden md:flex w-96 flex-col border-l px-6 md:px-8 py-6 md:py-8">
+      <div className="mb-6 md:mb-8 flex items-center justify-between">
+        <h3 className="text-lg md:text-2xl font-semibold">My Cart</h3>
+      </div>
+      <CartContent />
     </aside>
   )
 }

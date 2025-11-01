@@ -113,7 +113,7 @@ export default function DashboardPage() {
       <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
 
       <div className="flex-1 flex flex-col overflow-hidden pb-20 md:pb-0">
-        <Header isCartOpen={isCartOpen} onToggleCart={() => setIsCartOpen(!isCartOpen)} />
+        <Header isCartOpen={isCartOpen} onToggleCart={() => setIsCartOpen(!isCartOpen)} showBrandText={true} />
 
         <main className="flex-1 px-4 md:px-8 py-6 md:py-8 overflow-y-auto safe-area-inset-bottom">
           <PromotionalCards />
@@ -121,7 +121,12 @@ export default function DashboardPage() {
         </main>
       </div>
 
-      {isCartOpen && <CartSidebar items={cartItems} onUpdateQuantity={updateQuantity} />}
+      <CartSidebar 
+        items={cartItems} 
+        onUpdateQuantity={updateQuantity} 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+      />
     </div>
   )
 }

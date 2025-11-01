@@ -1,6 +1,7 @@
 "use client"
 
-import { Bell, Search, Menu } from "lucide-react"
+import { Bell, Search } from "lucide-react"
+import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,9 +12,10 @@ interface HeaderProps {
   onToggleCart?: () => void
   title?: string
   subtitle?: string
+  showBrandText?: boolean
 }
 
-export function Header({ isCartOpen = true, onToggleCart, title, subtitle }: HeaderProps) {
+export function Header({ isCartOpen = true, onToggleCart, title, subtitle, showBrandText = false }: HeaderProps) {
   const { toggleSidebar } = useSidebar()
 
   return (
@@ -21,15 +23,24 @@ export function Header({ isCartOpen = true, onToggleCart, title, subtitle }: Hea
       <div className="flex items-center gap-4">
         <button
           onClick={() => toggleSidebar()}
-          className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors"
+          className="md:hidden flex items-center gap-2 hover:opacity-80 transition-opacity"
           aria-label="Toggle sidebar"
         >
-          <Menu className="h-6 w-6" />
+          <Image src="/uvoy-logo.png" alt="Uvoy" width={32} height={32} className="object-contain" />
+          {showBrandText && <span className="text-lg font-bold text-[#415444]">Uvoy</span>}
         </button>
-        <div className="space-y-1 min-w-0">
-          <h2 className="text-lg md:text-2xl font-bold truncate">{title || "Welcome!"}</h2>
-          {subtitle && <p className="text-xs md:text-sm text-gray-600 truncate">{subtitle}</p>}
-        </div>
+        {showBrandText && (
+          <div className="hidden md:flex items-center gap-2">
+            <Image src="/uvoy-logo.png" alt="Uvoy" width={40} height={40} className="object-contain" />
+            <span className="text-xl font-bold text-[#415444]">Uvoy</span>
+          </div>
+        )}
+        {title && (
+          <div className="space-y-1 min-w-0">
+            <h2 className="text-lg md:text-2xl font-bold truncate">{title}</h2>
+            {subtitle && <p className="text-xs md:text-sm text-gray-600 truncate">{subtitle}</p>}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-2 md:gap-6">
